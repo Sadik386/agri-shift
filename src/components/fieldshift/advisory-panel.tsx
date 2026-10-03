@@ -4,6 +4,7 @@ import { buildAdvisories } from "@/lib/fieldshift/agronomy";
 import { cn } from "@/lib/utils";
 import type { Advisory, FieldSite, RotationPlan } from "@/lib/fieldshift/types";
 import type { LiveWeather } from "@/lib/fieldshift/external.functions";
+import { useLang } from "@/lib/i18n";
 import {
   AlertTriangle,
   AlertOctagon,
@@ -29,6 +30,8 @@ export function AdvisoryPanel({
   liveWeather?: LiveWeather | null;
   isLoadingWeather?: boolean;
 }) {
+  const { lang } = useLang();
+  const isBn = lang === "bn";
   const [filter, setFilter] = useState<"all" | "critical" | "warning" | "info">("all");
   const [acknowledged, setAcknowledged] = useState<Record<string, boolean>>({});
 
@@ -52,19 +55,19 @@ export function AdvisoryPanel({
       case "critical":
         return (
           <span className="flex items-center gap-1.5 px-2 py-0.5 rounded font-mono text-[9px] uppercase tracking-wider bg-rose-500/15 border border-rose-500/40 text-rose-400 animate-pulse">
-            <AlertOctagon className="w-3 h-3" /> CRITICAL
+            <AlertOctagon className="w-3 h-3" /> {isBn ? "জরুরি" : "CRITICAL"}
           </span>
         );
       case "warning":
         return (
           <span className="flex items-center gap-1.5 px-2 py-0.5 rounded font-mono text-[9px] uppercase tracking-wider bg-amber-500/15 border border-amber-500/40 text-amber-400">
-            <AlertTriangle className="w-3 h-3" /> ATTENTION
+            <AlertTriangle className="w-3 h-3" /> {isBn ? "সতর্কতা" : "ATTENTION"}
           </span>
         );
       case "info":
         return (
           <span className="flex items-center gap-1.5 px-2 py-0.5 rounded font-mono text-[9px] uppercase tracking-wider bg-cyan-500/15 border border-cyan-500/40 text-cyan-400">
-            <Info className="w-3 h-3" /> GUIDANCE
+            <Info className="w-3 h-3" /> {isBn ? "পরামর্শ" : "GUIDANCE"}
           </span>
         );
     }
@@ -72,18 +75,20 @@ export function AdvisoryPanel({
 
   return (
     <Panel
-      eyebrow="Module 04"
-      title="Smart agronomic advisory & sensor anomaly alerts"
+      eyebrow={isBn ? "মডিউল ০৪" : "Module 04"}
+      title={isBn ? "স্মার্ট কৃষি পরামর্শ ও সেন্সর অসঙ্গতি সতর্কতা" : "Smart agronomic advisory & sensor anomaly alerts"}
       right={
         <div className="flex items-center gap-2">
           {criticalCount > 0 ? (
             <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-rose-500/15 border border-rose-500/30 text-rose-400">
               <span className="h-1.5 w-1.5 rounded-full bg-rose-400 animate-ping" />
-              {criticalCount} CRITICAL ACTION{criticalCount > 1 ? "S" : ""} REQUIRED
+              {isBn 
+                ? `${criticalCount}টি জরুরি পদক্ষেপ প্রয়োজন` 
+                : `${criticalCount} CRITICAL ACTION${criticalCount > 1 ? "S" : ""} REQUIRED`}
             </span>
           ) : (
             <span className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-emerald-500/15 border border-emerald-500/30 text-emerald-400">
-              <CheckCircle2 className="w-3 h-3" /> SENSORS NOMINAL
+              <CheckCircle2 className="w-3 h-3" /> {isBn ? "সেন্সর স্বাভাবিক" : "SENSORS NOMINAL"}
             </span>
           )}
         </div>
@@ -96,12 +101,12 @@ export function AdvisoryPanel({
             <div className="flex items-center gap-2">
               <CloudRain className="w-4 h-4 text-cyan-400" />
               <span className="font-mono text-xs font-semibold text-foreground uppercase tracking-wider">
-                Micro-climate & Atmospheric Moisture Window
+                {isBn ? "মাইক্রো-ক্লাইমেট ও বায়ুমণ্ডলীয় আর্দ্রতা উইন্ডো" : "Micro-climate & Atmospheric Moisture Window"}
               </span>
             </div>
             <div className="flex items-center gap-2">
               <span className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground">
-                Feed: {liveWeather?.ok ? "Open-Meteo ECMWF API" : "Simulated GPM Forecast"}
+                Feed: {liveWeather?.ok ? (isBn ? "Open-Meteo ECMWF API (লাইভ)" : "Open-Meteo ECMWF API") : (isBn ? "নাসা GPM পূর্বাভাস" : "Simulated GPM Forecast")}
               </span>
               <OriginDot origin={liveWeather?.ok ? "live" : "modeled"} />
             </div>
@@ -110,43 +115,43 @@ export function AdvisoryPanel({
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div className="rounded-lg border border-border/60 bg-card/40 p-2.5">
               <p className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground">
-                Observed Rain (Past 7d)
+                {isBn ? "পর্যবেক্ষিত বৃষ্টি (বিগত ৭ দিন)" : "Observed Rain (Past 7d)"}
               </p>
               <p className="mt-1 font-mono text-lg font-semibold text-cyan-400">
                 {liveWeather?.rainfall7dMm !== undefined
                   ? `${liveWeather.rainfall7dMm} mm`
                   : `${field.telemetry.rainfall7dMm} mm`}
               </p>
-              <p className="text-[10px] text-muted-foreground">GPM IMERG calibrated</p>
+              <p className="text-[10px] text-muted-foreground">{isBn ? "নাসা GPM IMERG ক্যালিব্রেটেড" : "GPM IMERG calibrated"}</p>
             </div>
 
             <div className="rounded-lg border border-border/60 bg-card/40 p-2.5">
               <p className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground">
-                Forecast Rain (Next 7d)
+                {isBn ? "বৃষ্টিপাতের পূর্বাভাস (পরবর্তী ৭ দিন)" : "Forecast Rain (Next 7d)"}
               </p>
               <p className="mt-1 font-mono text-lg font-semibold text-foreground">
                 {liveWeather?.forecastRain7dMm !== undefined
                   ? `${liveWeather.forecastRain7dMm} mm`
                   : `${(field.telemetry.rainfall7dMm * 0.85).toFixed(0)} mm`}
               </p>
-              <p className="text-[10px] text-muted-foreground">High confidence window</p>
+              <p className="text-[10px] text-muted-foreground">{isBn ? "উচ্চ নির্ভুলতার পূর্বাভাস" : "High confidence window"}</p>
             </div>
 
             <div className="rounded-lg border border-border/60 bg-card/40 p-2.5">
               <p className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground">
-                Max Projected Temp
+                {isBn ? "প্রত্যাশিত সর্বোচ্চ তাপমাত্রা" : "Max Projected Temp"}
               </p>
               <p className="mt-1 font-mono text-lg font-semibold text-amber-400">
                 {liveWeather?.maxTempC !== undefined && liveWeather.maxTempC > -90
                   ? `${liveWeather.maxTempC.toFixed(1)} °C`
                   : `${(field.telemetry.lstC * 0.95).toFixed(1)} °C`}
               </p>
-              <p className="text-[10px] text-muted-foreground">2m ambient canopy level</p>
+              <p className="text-[10px] text-muted-foreground">{isBn ? "২মি ক্যানোপি স্তর" : "2m ambient canopy level"}</p>
             </div>
 
             <div className="rounded-lg border border-border/60 bg-card/40 p-2.5">
               <p className="font-mono text-[9px] uppercase tracking-wider text-muted-foreground">
-                Reference ET₀ (Next 7d)
+                {isBn ? "রেফারেন্স বাষ্পীভবন ET₀ (৭ দিন)" : "Reference ET₀ (Next 7d)"}
               </p>
               <p className="mt-1 font-mono text-lg font-semibold text-cyan-400">
                 {liveWeather?.et0Next7dMm !== undefined
@@ -162,7 +167,7 @@ export function AdvisoryPanel({
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/70 pb-3">
           <div className="flex items-center gap-1.5">
             <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground mr-1">
-              Filter:
+              {isBn ? "ফিল্টার:" : "Filter:"}
             </span>
             <button
               onClick={() => setFilter("all")}
@@ -173,7 +178,7 @@ export function AdvisoryPanel({
                   : "bg-secondary/60 text-muted-foreground hover:text-foreground",
               )}
             >
-              All ({advisories.length})
+              {isBn ? "সকল" : "All"} ({advisories.length})
             </button>
             <button
               onClick={() => setFilter("critical")}
@@ -184,7 +189,7 @@ export function AdvisoryPanel({
                   : "bg-secondary/60 text-rose-400/80 hover:text-rose-300",
               )}
             >
-              Critical ({criticalCount})
+              {isBn ? "জরুরি" : "Critical"} ({criticalCount})
             </button>
             <button
               onClick={() => setFilter("warning")}
@@ -195,7 +200,7 @@ export function AdvisoryPanel({
                   : "bg-secondary/60 text-amber-400/80 hover:text-amber-300",
               )}
             >
-              Warnings ({warningCount})
+              {isBn ? "সতর্কতা" : "Warnings"} ({warningCount})
             </button>
             <button
               onClick={() => setFilter("info")}
@@ -206,12 +211,12 @@ export function AdvisoryPanel({
                   : "bg-secondary/60 text-cyan-400/80 hover:text-cyan-300",
               )}
             >
-              Info ({infoCount})
+              {isBn ? "পরামর্শ" : "Info"} ({infoCount})
             </button>
           </div>
 
           <div className="font-mono text-[10px] text-muted-foreground">
-            Target Crop: <span className="text-foreground font-semibold">{plan.label.split(" → ")[0]}</span>
+            {isBn ? "উদ্দিষ্ট ফসল: " : "Target Crop: "}<span className="text-foreground font-semibold">{plan.label.split(" → ")[0]}</span>
           </div>
         </div>
 
@@ -249,11 +254,11 @@ export function AdvisoryPanel({
                     <div className="flex flex-wrap items-center gap-2">
                       {getSeverityBadge(advisory.severity)}
                       <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-                        Source: {advisory.source}
+                        {isBn ? "উৎস: " : "Source: "}{advisory.source}
                       </span>
                       {isAck && (
                         <span className="font-mono text-[9px] px-1.5 py-0.2 rounded bg-secondary text-muted-foreground">
-                          ACKNOWLEDGED
+                          {isBn ? "স্বীকৃত" : "ACKNOWLEDGED"}
                         </span>
                       )}
                     </div>
@@ -266,7 +271,9 @@ export function AdvisoryPanel({
                     onClick={() => toggleAck(advisory.id)}
                     className="self-start font-mono text-[10px] uppercase tracking-wider px-2.5 py-1 rounded border border-border/80 bg-secondary/50 hover:bg-secondary text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    {isAck ? "Undo Ack" : "Acknowledge"}
+                    {isAck 
+                      ? (isBn ? "বাতিল" : "Undo Ack") 
+                      : (isBn ? "স্বীকার করুন" : "Acknowledge")}
                   </button>
                 </div>
 
@@ -279,7 +286,7 @@ export function AdvisoryPanel({
                   <ArrowRight className="w-3.5 h-3.5 text-primary mt-0.5 shrink-0" />
                   <div className="text-xs">
                     <span className="font-mono text-[10px] uppercase tracking-wider font-semibold text-primary mr-1.5">
-                      Recommended Intervention:
+                      {isBn ? "প্রস্তাবিত পদক্ষেপ:" : "Recommended Intervention:"}
                     </span>
                     <span className="text-foreground/95">{advisory.action}</span>
                   </div>

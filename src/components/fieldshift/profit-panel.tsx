@@ -11,6 +11,7 @@ import {
 import { cn } from "@/lib/utils";
 import type { CostInputs, FieldSite, RotationPlan, Crop } from "@/lib/fieldshift/types";
 import { RotateCcw, TrendingUp, AlertTriangle, ShieldCheck, DollarSign, Gauge, Sliders } from "lucide-react";
+import { useLang } from "@/lib/i18n";
 
 const ProfitSurfaceScene = lazy(() =>
   import("./profit-surface-scene").then((m) => ({ default: m.ProfitSurfaceScene })),
@@ -23,6 +24,8 @@ export function ProfitPanel({
   field: FieldSite;
   plan: RotationPlan;
 }) {
+  const { lang } = useLang();
+  const isBn = lang === "bn";
   const initialCosts = useMemo(() => defaultCosts(field, plan), [field, plan]);
   const [costs, setCosts] = useState<CostInputs>(initialCosts);
   const [nitrogenCreditActive, setNitrogenCreditActive] = useState(true);
@@ -55,9 +58,9 @@ export function ProfitPanel({
 
   // Scenarios for quick comparison
   const scenarios = [
-    { label: "Optimal Season", deficit: 0, mult: costs.fertilizerPriceIndex },
-    { label: "Moderate Drought", deficit: 25, mult: costs.fertilizerPriceIndex * 1.1 },
-    { label: "Severe Stress", deficit: 50, mult: costs.fertilizerPriceIndex * 1.25 },
+    { label: isBn ? "অনুকূল মৌসুম" : "Optimal Season", deficit: 0, mult: costs.fertilizerPriceIndex },
+    { label: isBn ? "মাঝারি খরা" : "Moderate Drought", deficit: 25, mult: costs.fertilizerPriceIndex * 1.1 },
+    { label: isBn ? "চরম জলবায়ু চাপ" : "Severe Stress", deficit: 50, mult: costs.fertilizerPriceIndex * 1.25 },
   ].map((sc) => {
     const net = netProfitBdtAcre({
       field,
@@ -76,16 +79,16 @@ export function ProfitPanel({
 
   return (
     <Panel
-      eyebrow="Module 05"
-      title="Financial risk calculator & 3D profit surface"
+      eyebrow={isBn ? "মডিউল ০৫" : "Module 05"}
+      title={isBn ? "আর্থিক ঝুঁকি ক্যালকুলেটর ও ৩D লাভ-লোকসান সারফেস" : "Financial risk calculator & 3D profit surface"}
       right={
         <button
           onClick={handleReset}
           className="flex items-center gap-1.5 rounded border border-border/80 bg-secondary/50 px-2.5 py-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
-          title="Reset costs to baseline agronomic defaults"
+          title={isBn ? "বেসলাইন কৃষি খরচে পুনঃস্থাপন করুন" : "Reset costs to baseline agronomic defaults"}
         >
           <RotateCcw className="w-3 h-3" />
-          Reset Baseline Costs
+          {isBn ? "বেসলাইন খরচে ফেরত যান" : "Reset Baseline Costs"}
         </button>
       }
     >
@@ -93,27 +96,27 @@ export function ProfitPanel({
         {/* Risk Distribution Monte Carlo Stat Badges */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
           <StatusBadge
-            label="P10 Downside Risk"
+            label={isBn ? "P10 সর্বোচ্চ ঝুঁকি" : "P10 Downside Risk"}
             value={formatBdt(bands.p10 * 1000)}
             tone={bands.p10 < 0 ? "rose" : "amber"}
-            hint="10th percentile worst-case drought/cost shock"
+            hint={isBn ? "১০ম পার্সেন্টাইল চরম খরা ও ব্যয় ধাক্কা" : "10th percentile worst-case drought/cost shock"}
           />
           <StatusBadge
-            label="P50 Expected Median"
+            label={isBn ? "P50 প্রত্যাশিত মধ্যক" : "P50 Expected Median"}
             value={formatBdt(bands.p50 * 1000)}
             tone="cyan"
-            hint="Median expected margin across 2,500 simulations"
+            hint={isBn ? "২,৫০০টি সিমুলেশনে প্রত্যাশিত মধ্যক লাভ" : "Median expected margin across 2,500 simulations"}
           />
           <StatusBadge
-            label="P90 Upside Potential"
+            label={isBn ? "P90 সর্বোচ্চ সম্ভাব্যতা" : "P90 Upside Potential"}
             value={formatBdt(bands.p90 * 1000)}
             tone="green"
-            hint="90th percentile favorable weather & pricing"
+            hint={isBn ? "৯০তম পার্সেন্টাইল অনুকূল আবহাওয়া ও বাজারদর" : "90th percentile favorable weather & pricing"}
           />
           <StatusBadge
-            label="Drought Break-Even"
-            value={bands.breakEvenDeficitPct !== null ? `${bands.breakEvenDeficitPct}%` : "No Loss"}
-            unit={bands.breakEvenDeficitPct !== null ? "deficit" : ""}
+            label={isBn ? "খরা ব্রেক-ইভেন স্তর" : "Drought Break-Even"}
+            value={bands.breakEvenDeficitPct !== null ? `${bands.breakEvenDeficitPct}%` : (isBn ? "ক্ষতি নেই" : "No Loss")}
+            unit={bands.breakEvenDeficitPct !== null ? (isBn ? "ঘাটতি" : "deficit") : ""}
             tone={
               bands.breakEvenDeficitPct === null || bands.breakEvenDeficitPct > 40
                 ? "green"
@@ -121,7 +124,7 @@ export function ProfitPanel({
                   ? "amber"
                   : "rose"
             }
-            hint="Rainfall deficit before margin crosses into negative"
+            hint={isBn ? "নিট লাভ শূন্যে নামার পূর্ব পর্যন্ত বৃষ্টির ঘাটতি" : "Rainfall deficit before margin crosses into negative"}
           />
         </div>
 
@@ -130,12 +133,14 @@ export function ProfitPanel({
           {/* 3D Profit Surface Scene */}
           <SceneFrame
             className="h-[380px] lg:h-[460px]"
-            caption="Interactive 3D Profit Landscape · Drag to rotate · Zoom to inspect zero-plane"
+            caption={isBn 
+              ? "ইন্টারেক্টিভ ৩D মুনাফা ল্যান্ডস্কেপ · ঘোরাতে ড্র্যাগ করুন · জিরো-প্লেন দেখতে জুম করুন"
+              : "Interactive 3D Profit Landscape · Drag to rotate · Zoom to inspect zero-plane"}
           >
             <Suspense
               fallback={
                 <div className="flex h-full items-center justify-center font-mono text-[11px] tracking-[0.2em] text-muted-foreground">
-                  COMPUTING MONTE CARLO PROFIT SURFACE…
+                  {isBn ? "মন্টে কার্লো মুনাফা সারফেস গণনা করা হচ্ছে…" : "COMPUTING MONTE CARLO PROFIT SURFACE…"}
                 </div>
               }
             >
@@ -145,12 +150,12 @@ export function ProfitPanel({
             {/* Zero-profit Plane / Palette Guide */}
             <div className="pointer-events-none absolute left-3 top-3 z-20 rounded-md border border-border/70 bg-background/85 px-2.5 py-2 backdrop-blur-md">
               <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-muted-foreground">
-                Surface Elevation & Color
+                {isBn ? "উচ্চতা ও রঙ সূচক" : "Surface Elevation & Color"}
               </p>
               <div className="mt-1.5 h-1.5 w-32 rounded-full bg-[linear-gradient(to_right,#ff5d5d,#ffc857,#4ce0a5)]" />
               <div className="mt-1 flex justify-between font-mono text-[9px] text-muted-foreground">
-                <span className="text-rose-400">Deficit Loss</span>
-                <span className="text-emerald-400">High Margin</span>
+                <span className="text-rose-400">{isBn ? "ঘাটতি জনিত ক্ষতি" : "Deficit Loss"}</span>
+                <span className="text-emerald-400">{isBn ? "উচ্চ নিট মুনাফা" : "High Margin"}</span>
               </div>
             </div>
           </SceneFrame>
@@ -161,18 +166,18 @@ export function ProfitPanel({
               <div className="flex items-center gap-2">
                 <Sliders className="w-4 h-4 text-primary" />
                 <span className="font-mono text-xs font-semibold text-foreground uppercase tracking-wider">
-                  Cost Architecture (BDT/Acre)
+                  {isBn ? "উৎপাদন খরচ কাঠামো (টাকা/একর)" : "Cost Architecture (BDT/Acre)"}
                 </span>
               </div>
               <span className="font-mono text-[10px] text-muted-foreground">
-                Crop: {crop.name}
+                {isBn ? `ফসল: ${crop.name}` : `Crop: ${crop.name}`}
               </span>
             </div>
 
             {/* Seed Cost Slider */}
             <div className="space-y-1.5">
               <div className="flex justify-between text-xs">
-                <span className="text-muted-foreground">Seed Cost:</span>
+                <span className="text-muted-foreground">{isBn ? "বীজ খরচ:" : "Seed Cost:"}</span>
                 <span className="font-mono text-foreground font-semibold">
                   ৳{costs.seed.toLocaleString()}
                 </span>
@@ -191,7 +196,7 @@ export function ProfitPanel({
             {/* Fertilizer Cost Slider */}
             <div className="space-y-1.5">
               <div className="flex justify-between text-xs">
-                <span className="text-muted-foreground">Fertilizer (Baseline):</span>
+                <span className="text-muted-foreground">{isBn ? "সার খরচ (বেসলাইন):" : "Fertilizer (Baseline):"}</span>
                 <span className="font-mono text-foreground font-semibold">
                   ৳{costs.fertilizer.toLocaleString()}
                 </span>
@@ -210,7 +215,7 @@ export function ProfitPanel({
             {/* Fuel & Machinery Slider */}
             <div className="space-y-1.5">
               <div className="flex justify-between text-xs">
-                <span className="text-muted-foreground">Fuel & Tillage:</span>
+                <span className="text-muted-foreground">{isBn ? "জ্বালানি ও জমি চাষ:" : "Fuel & Tillage:"}</span>
                 <span className="font-mono text-foreground font-semibold">
                   ৳{costs.fuel.toLocaleString()}
                 </span>
@@ -229,7 +234,7 @@ export function ProfitPanel({
             {/* Irrigation Pumping Slider */}
             <div className="space-y-1.5">
               <div className="flex justify-between text-xs">
-                <span className="text-muted-foreground">Irrigation Power (Diesel/Electric):</span>
+                <span className="text-muted-foreground">{isBn ? "সেচ খরচ (ডিজেল/বিদ্যুৎ):" : "Irrigation Power (Diesel/Electric):"}</span>
                 <span className="font-mono text-foreground font-semibold">
                   ৳{Math.round(costs.irrigation).toLocaleString()}
                 </span>
@@ -248,7 +253,7 @@ export function ProfitPanel({
             {/* Fertilizer Price Index Multiplier */}
             <div className="space-y-1.5 pt-1">
               <div className="flex justify-between text-xs">
-                <span className="text-muted-foreground">Fertilizer Global Price Index:</span>
+                <span className="text-muted-foreground">{isBn ? "বিশ্বব্যাপী সারের মূল্য সূচক:" : "Fertilizer Global Price Index:"}</span>
                 <span className="font-mono text-amber-400 font-semibold">
                   {costs.fertilizerPriceIndex.toFixed(2)}×
                 </span>
@@ -263,9 +268,9 @@ export function ProfitPanel({
                 className="w-full accent-amber-400 h-1.5 bg-secondary rounded-lg cursor-pointer"
               />
               <div className="flex justify-between font-mono text-[9px] text-muted-foreground">
-                <span>-30% Subsidized</span>
-                <span>Current 1.0×</span>
-                <span>+50% Global Spike</span>
+                <span>{isBn ? "-৩০% ভরতুকি" : "-30% Subsidized"}</span>
+                <span>{isBn ? "বর্তমান ১.০×" : "Current 1.0×"}</span>
+                <span>{isBn ? "+৫০% বৈশ্বিক বৃদ্ধি" : "+50% Global Spike"}</span>
               </div>
             </div>
 
@@ -274,12 +279,12 @@ export function ProfitPanel({
               <label className="flex items-center justify-between cursor-pointer">
                 <div>
                   <span className="text-xs font-medium text-foreground block">
-                    Legume N-Credit (-20% Urea)
+                    {isBn ? "ডালজাতীয় নাইট্রোজেন ক্রেডিট (-২০% ইউরিয়া)" : "Legume N-Credit (-20% Urea)"}
                   </span>
                   <span className="text-[10px] text-muted-foreground">
                     {hasLegume
-                      ? "Active in rotation (Mungbean fixes N)"
-                      : "No legume in rotation sequence"}
+                      ? (isBn ? "পর্যায়ক্রমে সক্রিয় (মুগডাল নাইট্রোজেন যোগ করে)" : "Active in rotation (Mungbean fixes N)")
+                      : (isBn ? "পর্যায়ক্রমে কোনো ডালজাতীয় ফসল নেই" : "No legume in rotation sequence")}
                   </span>
                 </div>
                 <input
@@ -297,7 +302,7 @@ export function ProfitPanel({
         {/* Climate Shock Scenario Comparison Matrix */}
         <div className="rounded-xl border border-border/80 bg-secondary/20 p-4">
           <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground mb-3">
-            Scenario Sensitivity Matrix (Per Acre Return)
+            {isBn ? "জলবায়ু ধাক্কা সংবেদনশীলতা ম্যাট্রিক্স (প্রতি একরে আয়)" : "Scenario Sensitivity Matrix (Per Acre Return)"}
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -314,7 +319,7 @@ export function ProfitPanel({
                   <div className="flex items-center justify-between">
                     <span className="font-semibold text-xs text-foreground">{sc.label}</span>
                     <span className="font-mono text-[10px] text-muted-foreground">
-                      {sc.deficit}% Rain Deficit
+                      {sc.deficit}% {isBn ? "বৃষ্টির ঘাটতি" : "Rain Deficit"}
                     </span>
                   </div>
 
@@ -329,11 +334,11 @@ export function ProfitPanel({
 
                   <div className="pt-2 border-t border-border/60 space-y-1 font-mono text-[10px] text-muted-foreground">
                     <div className="flex justify-between">
-                      <span>Gross Farmgate Revenue:</span>
+                      <span>{isBn ? "খামার পর্যায়ের মোট আয়:" : "Gross Farmgate Revenue:"}</span>
                       <span className="text-foreground">৳{sc.revenue.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Operational Inputs:</span>
+                      <span>{isBn ? "মোট পরিচালন ব্যয়:" : "Operational Inputs:"}</span>
                       <span className="text-foreground">৳{sc.totalCost.toLocaleString()}</span>
                     </div>
                   </div>

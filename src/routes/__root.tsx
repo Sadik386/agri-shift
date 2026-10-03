@@ -12,6 +12,8 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SmoothScroll } from "../components/fieldshift/smooth-scroll";
+import { LanguageProvider } from "@/lib/i18n";
+import { FloatingChatWidget } from "@/components/chat/FloatingChatWidget";
 
 function NotFoundComponent() {
   return (
@@ -78,14 +80,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Field Shift — 3D Farm Adaptation Dashboard" },
+      { title: "AgriShift — 3D Farm Adaptation Dashboard" },
       {
         name: "description",
         content:
           "NASA Earth observation-powered mission control dashboard for agricultural climate adaptation, water conservation, and crop rotation planning in Bangladesh.",
       },
-      { name: "author", content: "Field Shift Team" },
-      { property: "og:title", content: "Field Shift — 3D Farm Adaptation Dashboard" },
+      { name: "author", content: "AgriShift Team" },
+      { property: "og:title", content: "AgriShift — 3D Farm Adaptation Dashboard" },
       {
         property: "og:description",
         content:
@@ -107,7 +109,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&family=Lexend+Deca:wght@700;800;900&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&family=Lexend+Deca:wght@700;800;900&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap",
       },
       {
         rel: "stylesheet",
@@ -141,9 +143,12 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SmoothScroll />
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <LanguageProvider>
+        <SmoothScroll />
+        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+        <Outlet />
+        <FloatingChatWidget />
+      </LanguageProvider>
     </QueryClientProvider>
   );
 }

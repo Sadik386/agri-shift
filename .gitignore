@@ -32,3 +32,9 @@ dist-ssr
 *.sw?
 .vercel
 .env*
+
+# Video recordings & test capture
+recordings/
+test_record/
+*.webm
+*.mp4

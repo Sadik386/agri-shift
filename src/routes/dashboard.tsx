@@ -13,12 +13,15 @@ import { AdvisoryPanel } from "@/components/fieldshift/advisory-panel";
 import { ProfitPanel } from "@/components/fieldshift/profit-panel";
 import { RegionalPanel } from "@/components/fieldshift/regional-panel";
 import { Globe } from "lucide-react";
+import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/dashboard")({
   component: DashboardPage,
 });
 
 function DashboardPage() {
+  const { lang } = useLang();
+  const isBn = lang === "bn";
   const [selectedField, setSelectedField] = useState<FieldSite>(FIELDS[0]!);
   const [selectedSeason, setSelectedSeason] = useState<string>("rabi");
   const [selectedPlan, setSelectedPlan] = useState<RotationPlan>(ROTATION_PLANS[0]!);
@@ -173,11 +176,13 @@ function DashboardPage() {
                 <div className="flex items-center gap-2">
                   <Globe className="w-4 h-4 text-primary" />
                   <p className="font-mono text-xs font-semibold text-foreground tracking-wider uppercase">
-                    Field Shift · Earth Observation Agronomy Engine
+                    {isBn ? "এগ্রিশিফট · আর্থ অবজারভেশন কৃষি ইঞ্জিন" : "AgriShift · Earth Observation Agronomy Engine"}
                   </p>
                 </div>
                 <p className="text-xs text-muted-foreground max-w-2xl leading-relaxed">
-                  Engineered for the NASA Space Apps Challenge "Field Shift: Adapting Farms with NASA Data". Fusing synthetic aperture radar (SAR), passive radiometry, thermal infrared, and optical spectral bands to safeguard Bangladesh groundwater resources while maximising farmer profitability.
+                  {isBn
+                    ? "নাসা স্পেস অ্যাপস চ্যালেঞ্জের জন্য নির্মিত প্ল্যাটফর্ম। রাডার (SAR), প্যাসিভ রেডিওমেট্রি, থার্মাল ইনফ্রারেড এবং অপটিক্যাল স্পেকট্রাল ব্যান্ডের সমন্বয়ে বাংলাদেশের ভূগর্ভস্থ পানি সুরক্ষা এবং কৃষকের নিট মুনাফা সর্বোচ্চ করার প্রযুক্তি।"
+                    : "Engineered for the NASA Space Apps Challenge \"AgriShift: Adapting Farms with NASA Data\". Fusing synthetic aperture radar (SAR), passive radiometry, thermal infrared, and optical spectral bands to safeguard Bangladesh groundwater resources while maximising farmer profitability."}
                 </p>
               </div>
 
@@ -186,7 +191,7 @@ function DashboardPage() {
                   v2.05-PRODUCTION
                 </span>
                 <span className="px-2.5 py-1 rounded bg-primary/10 border border-primary/30 text-primary">
-                  BANGLADESH GRID ACTIVE
+                  {isBn ? "বাংলাদেশ গ্রিড সক্রিয়" : "BANGLADESH GRID ACTIVE"}
                 </span>
               </div>
             </div>
@@ -200,7 +205,7 @@ function DashboardPage() {
                 <span>ISRIC SoilGrids 250m</span>
                 <span>Open-Meteo ECMWF</span>
               </div>
-              <div>© 2026 Field Shift Consortium · Zero-credential instant deployment</div>
+              <div>© 2026 AgriShift · {isBn ? "লাইভ নাসা উপাত্ত সুরক্ষিত" : "Zero-credential instant deployment"}</div>
             </div>
           </footer>
         </div>

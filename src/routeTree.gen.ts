@@ -10,11 +10,14 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
+import { Route as ChatRouteImport } from './routes/chat'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DatasetsRouteImport } from './routes/datasets'
 import { Route as FieldRouteImport } from './routes/field'
 import { Route as GlobeRouteImport } from './routes/globe'
+import { Route as HeatmapRouteImport } from './routes/heatmap'
 import { Route as PlannerRouteImport } from './routes/planner'
 
 const IndexRoute = IndexRouteImport.update({
@@ -22,9 +25,19 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AnalyticsRoute = AnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChatRoute = ChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -47,6 +60,11 @@ const GlobeRoute = GlobeRouteImport.update({
   path: '/globe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HeatmapRoute = HeatmapRouteImport.update({
+  id: '/heatmap',
+  path: '/heatmap',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PlannerRoute = PlannerRouteImport.update({
   id: '/planner',
   path: '/planner',
@@ -55,69 +73,90 @@ const PlannerRoute = PlannerRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/analytics': typeof AnalyticsRoute
+  '/chat': typeof ChatRoute
   '/dashboard': typeof DashboardRoute
   '/datasets': typeof DatasetsRoute
   '/field': typeof FieldRoute
   '/globe': typeof GlobeRoute
+  '/heatmap': typeof HeatmapRoute
   '/planner': typeof PlannerRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/analytics': typeof AnalyticsRoute
+  '/chat': typeof ChatRoute
   '/dashboard': typeof DashboardRoute
   '/datasets': typeof DatasetsRoute
   '/field': typeof FieldRoute
   '/globe': typeof GlobeRoute
+  '/heatmap': typeof HeatmapRoute
   '/planner': typeof PlannerRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/analytics': typeof AnalyticsRoute
+  '/chat': typeof ChatRoute
   '/dashboard': typeof DashboardRoute
   '/datasets': typeof DatasetsRoute
   '/field': typeof FieldRoute
   '/globe': typeof GlobeRoute
+  '/heatmap': typeof HeatmapRoute
   '/planner': typeof PlannerRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
     | '/analytics'
+    | '/chat'
     | '/dashboard'
     | '/datasets'
     | '/field'
     | '/globe'
+    | '/heatmap'
     | '/planner'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
     | '/analytics'
+    | '/chat'
     | '/dashboard'
     | '/datasets'
     | '/field'
     | '/globe'
+    | '/heatmap'
     | '/planner'
   id:
     | '__root__'
     | '/'
+    | '/about'
     | '/analytics'
+    | '/chat'
     | '/dashboard'
     | '/datasets'
     | '/field'
     | '/globe'
+    | '/heatmap'
     | '/planner'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutRoute: typeof AboutRoute
   AnalyticsRoute: typeof AnalyticsRoute
+  ChatRoute: typeof ChatRoute
   DashboardRoute: typeof DashboardRoute
   DatasetsRoute: typeof DatasetsRoute
   FieldRoute: typeof FieldRoute
   GlobeRoute: typeof GlobeRoute
+  HeatmapRoute: typeof HeatmapRoute
   PlannerRoute: typeof PlannerRoute
 }
 
@@ -130,11 +169,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/analytics': {
       id: '/analytics'
       path: '/analytics'
       fullPath: '/analytics'
       preLoaderRoute: typeof AnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/chat': {
+      id: '/chat'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof ChatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -165,6 +218,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GlobeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/heatmap': {
+      id: '/heatmap'
+      path: '/heatmap'
+      fullPath: '/heatmap'
+      preLoaderRoute: typeof HeatmapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/planner': {
       id: '/planner'
       path: '/planner'
@@ -177,11 +237,14 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutRoute: AboutRoute,
   AnalyticsRoute: AnalyticsRoute,
+  ChatRoute: ChatRoute,
   DashboardRoute: DashboardRoute,
   DatasetsRoute: DatasetsRoute,
   FieldRoute: FieldRoute,
   GlobeRoute: GlobeRoute,
+  HeatmapRoute: HeatmapRoute,
   PlannerRoute: PlannerRoute,
 }
 export const routeTree = rootRouteImport

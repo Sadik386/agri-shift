@@ -168,7 +168,7 @@
   --dk: #0f172a;
 }
 
-/* Field Shift custom classes */
+/* AgriShift custom classes */
 .nav-fs {
   position: sticky;
   top: 0;
@@ -187,6 +187,7 @@
   display: flex;
   gap: 12px;
   align-items: center;
+  white-space: nowrap;
 }
 
 .logo-fs {
@@ -199,14 +200,17 @@
   place-items: center;
   color: var(--cy);
   font-size: 20px;
+  flex-shrink: 0;
 }
 
 .brand-fs b {
   font-family: 'Lexend Deca', sans-serif;
   font-weight: 800;
-  font-size: 18px;
+  font-size: 17px;
+  line-height: 1.15;
   color: #fff;
   display: block;
+  white-space: nowrap;
 }
 
 .brand-fs b i {
@@ -218,8 +222,11 @@
   font-family: 'JetBrains Mono', monospace;
   font-weight: 700;
   font-size: 9px;
+  line-height: 1.2;
   color: var(--am);
   letter-spacing: 0.1em;
+  display: block;
+  white-space: nowrap;
 }
 
 .links-fs {
@@ -1453,3 +1460,144 @@ footer.footer-fs {
     padding: 12px !important;
   }
 }
+
+/* ========================================================
+   AgriShift Atmosphere & Climate Evidence Design System
+   ======================================================== */
+:root {
+  --rising: oklch(0.7871 0.1471 73.02);
+  --declining: oklch(0.5874 0.1457 27.52);
+  --stable: oklch(0.7463 0.1501 159.27);
+  --font-display: "Fraunces", "Lexend Deca", Georgia, serif;
+}
+
+.dark {
+  --rising: oklch(0.7871 0.1471 73.02);
+  --declining: oklch(0.5874 0.1457 27.52);
+  --stable: oklch(0.7463 0.1501 159.27);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.site-atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background: var(--background, #0B0E1A);
+}
+
+.site-atmosphere::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(11, 14, 26, 0.72), rgba(11, 14, 26, 0.94) 62%);
+}
+
+.atmosphere-frame {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 68vh;
+  object-fit: cover;
+  opacity: 0;
+  filter: saturate(0.82) contrast(1.08);
+  animation: atmosphere-cycle 24s ease-in-out infinite;
+  will-change: opacity, transform;
+}
+
+.atmosphere-frame-one {
+  animation-delay: 0s;
+}
+
+.atmosphere-frame-two {
+  animation-delay: 8s;
+}
+
+.atmosphere-frame-three {
+  animation-delay: 16s;
+}
+
+@keyframes atmosphere-cycle {
+  0%, 25% {
+    opacity: 0;
+    transform: scale(1.04) translateY(0);
+  }
+  8%, 24% {
+    opacity: 0.32;
+  }
+  33%, 100% {
+    opacity: 0;
+    transform: scale(1.1) translateY(-1.5%);
+  }
+}
+
+.site-brand-logo {
+  width: 2.75rem;
+  height: 2.75rem;
+  flex: 0 0 auto;
+  object-fit: contain;
+  border-radius: 50%;
+  filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+  transition: transform 180ms ease;
+}
+
+a:hover > .site-brand-logo {
+  transform: translateY(-1px) scale(1.03);
+}
+
+.nav-desktop-link,
+.nav-mobile-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--muted-foreground, #94a3b8);
+  transition: color 180ms ease, background-color 180ms ease;
+}
+
+.nav-desktop-link {
+  height: 2.35rem;
+  padding-inline: 0.7rem;
+  border-radius: var(--radius-md, 0.5rem);
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+
+.nav-mobile-link {
+  width: 100%;
+  padding: 0.9rem;
+  border-bottom: 1px solid var(--border, rgba(255, 255, 255, 0.1));
+}
+
+.nav-desktop-link svg,
+.nav-mobile-link svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.nav-desktop-link:hover,
+.nav-mobile-link:hover {
+  color: var(--foreground, #f8fafc);
+  background: var(--secondary, rgba(255, 255, 255, 0.08));
+}
+
+.nav-link-active,
+.nav-desktop-link.nav-link-active,
+.nav-mobile-link.nav-link-active {
+  color: var(--primary-foreground, #090d16) !important;
+  background: var(--primary, #38bdf8) !important;
+  font-weight: 600;
+}
+
+.panel {
+  border-radius: var(--radius-lg, 0.75rem);
+  border: 1px solid var(--border, rgba(255, 255, 255, 0.12));
+  background: color-mix(in oklab, var(--card, #141b2d) 85%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.7);
+}
+

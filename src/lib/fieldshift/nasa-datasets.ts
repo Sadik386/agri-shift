@@ -1,6 +1,6 @@
 /**
  * NASA Earth Observation Offline Datasets Catalog
- * Curated for the NASA Space Apps Challenge 2026: Field Shift - Adapting Farms with NASA Data.
+ * Curated for the NASA Space Apps Challenge 2026: AgriShift - Adapting Farms with NASA Data.
  * 
  * Provides local, offline-cached scientific granules from NASA missions (SMAP, Landsat 8/9,
  * ECOSTRESS, OpenET, NISAR, GRACE-FO, and GPM IMERG) calibrated for Bangladesh agricultural zones.
@@ -846,7 +846,7 @@ export function exportDatasetAsGeoJSON(dataset: NasaDataset) {
       spatialResolution: dataset.spatialResolution,
       temporalResolution: dataset.temporalResolution,
       exportedAt: new Date().toISOString(),
-      offlineEngine: "Field Shift - NASA Space Apps 2026",
+      offlineEngine: "AgriShift - NASA Space Apps 2026",
     },
     features: dataset.offlineGranules.map((g) => ({
       type: "Feature",
@@ -933,9 +933,9 @@ export function exportDatasetAsCSV(dataset: NasaDataset) {
  */
 export function exportAllOfflineDatasetsJSON() {
   const bundle = {
-    title: "Field Shift - Complete Offline NASA Earth Observations Archive",
+    title: "AgriShift - Complete Offline NASA Earth Observations Archive",
     version: "2026.1-RELEASE",
-    challenge: "NASA Space Apps Challenge 2026: Field Shift",
+    challenge: "NASA Space Apps Challenge 2026: AgriShift",
     exportedAt: new Date().toISOString(),
     datasetsCount: NASA_OFFLINE_DATASETS.length,
     datasets: NASA_OFFLINE_DATASETS,
@@ -947,7 +947,7 @@ export function exportAllOfflineDatasetsJSON() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `fieldshift_nasa_offline_complete_archive_${new Date().toISOString().slice(0, 10)}.json`;
+  a.download = `agrishift_nasa_offline_complete_archive_${new Date().toISOString().slice(0, 10)}.json`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);

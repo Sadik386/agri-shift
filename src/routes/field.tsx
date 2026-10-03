@@ -4,6 +4,7 @@ import { AppTopbar } from "@/components/fieldshift/app-topbar";
 import { Sparkline } from "@/components/fieldshift/sparkline";
 import { FIELDS } from "@/lib/fieldshift/data";
 import type { FieldSite } from "@/lib/fieldshift/types";
+import { useLang } from "@/lib/i18n";
 
 const FieldTerrainScene = lazy(() =>
   import("@/components/fieldshift/field-terrain-scene").then((m) => ({ default: m.FieldTerrainScene })),
@@ -14,6 +15,8 @@ export const Route = createFileRoute("/field")({
 });
 
 function FieldMapPage() {
+  const { lang } = useLang();
+  const isBn = lang === "bn";
   const [selectedField, setSelectedField] = useState<FieldSite>(FIELDS[0]!);
   const [mode, setMode] = useState<"moisture" | "canopy">("moisture");
   const [show3D, setShow3D] = useState(true);
@@ -35,7 +38,7 @@ function FieldMapPage() {
                 color: "var(--cy)",
               }}
             >
-              TARGET PARCEL · {selectedField.name.toUpperCase()} ({selectedField.district})
+              {isBn ? "টার্গেট প্লট" : "TARGET PARCEL"} · {selectedField.name.toUpperCase()} ({selectedField.district})
             </span>
 
             {/* Field Site Dropdown */}
@@ -64,7 +67,7 @@ function FieldMapPage() {
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              Root Moisture
+              {isBn ? "মাটির আর্দ্রতা" : "Root Moisture"}
             </button>
             <button
               onClick={() => setMode("canopy")}
@@ -74,13 +77,13 @@ function FieldMapPage() {
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              Canopy Cover
+              {isBn ? "উদ্ভিদ আচ্ছাদন" : "Canopy Cover"}
             </button>
             <button
               onClick={() => setShow3D(!show3D)}
               className="ml-1 px-2 py-1 rounded border border-border/60 text-muted-foreground hover:text-foreground"
             >
-              {show3D ? "3D Mesh" : "Stylized"}
+              {show3D ? (isBn ? "৩D মেশ" : "3D Mesh") : (isBn ? "দ্বিমাত্রিক" : "Stylized")}
             </button>
           </div>
 
@@ -89,7 +92,7 @@ function FieldMapPage() {
               <Suspense
                 fallback={
                   <div className="flex h-full items-center justify-center font-mono text-[11px] tracking-[0.2em] text-muted-foreground">
-                    GENERATING VOLUMETRIC TERRAIN MESH…
+                    {isBn ? "৩D ভূ-প্রকৃতি মেশ তৈরি হচ্ছে…" : "GENERATING VOLUMETRIC TERRAIN MESH…"}
                   </div>
                 }
               >
@@ -102,7 +105,7 @@ function FieldMapPage() {
                 STYLIZED DEM ORTHORECTIFICATION
               </span>
               <p className="font-mono text-xs text-muted-foreground">
-                Parcel Area: {selectedField.areaAcres} Acres · Elevation: {selectedField.elevationM} m
+                Parcel Area: {selectedField.areaAcres} {isBn ? "একর" : "Acres"} · Elevation: {selectedField.elevationM} m
               </p>
             </div>
           )}
@@ -110,12 +113,14 @@ function FieldMapPage() {
           {/* Color Gradient Scale Legend */}
           <div className="pointer-events-none absolute bottom-4 left-4 z-20 rounded-md border border-border/70 bg-background/85 px-3 py-2 backdrop-blur-md">
             <p className="font-mono text-[9px] uppercase tracking-[0.18em] text-muted-foreground">
-              {mode === "moisture" ? "SMAP Volumetric Water Column (m³/m³)" : "NISAR / Landsat Canopy Index"}
+              {mode === "moisture"
+                ? (isBn ? "SMAP মাটির আর্দ্রতা স্তম্ভ (m³/m³)" : "SMAP Volumetric Water Column (m³/m³)")
+                : (isBn ? "NISAR / Landsat গাছপালা সূচক" : "NISAR / Landsat Canopy Index")}
             </p>
             <div className="mt-1.5 h-1.5 w-36 rounded-full bg-[linear-gradient(to_right,#c2603a,#ffc857,#3fa9ff)]" />
             <div className="mt-1 flex justify-between font-mono text-[9px] text-muted-foreground">
-              <span>Dry / Stressed</span>
-              <span>Optimal Saturation</span>
+              <span>{isBn ? "শুষ্ক / পানির ঘাটতি" : "Dry / Stressed"}</span>
+              <span>{isBn ? "অনুকূল আর্দ্রতা" : "Optimal Saturation"}</span>
             </div>
           </div>
         </div>
@@ -124,30 +129,30 @@ function FieldMapPage() {
         <aside className="panel-fs" style={{ borderLeft: "1px solid var(--line)" }}>
           <div className="flex items-center justify-between pb-1 border-b border-slate-800">
             <span className="mono" style={{ fontSize: "11px", color: "var(--cy)" }}>
-              ◔ NASA DATASET TELEMETRY
+              ◔ {isBn ? "নাসা উপাত্ত টেলিমেট্রি" : "NASA DATASET TELEMETRY"}
             </span>
             <Link
               to="/datasets"
               className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/30 hover:bg-emerald-500/20 transition-colors"
             >
-              OFFLINE GRANULES ›
+              {isBn ? "সংরক্ষিত উপাত্ত ›" : "OFFLINE GRANULES ›"}
             </Link>
           </div>
 
           <h2 className="lx" style={{ fontSize: "22px" }}>
-            Soil &amp; Canopy State
+            {isBn ? "মাটি ও উদ্ভিদের অবস্থা" : "Soil & Canopy State"}
           </h2>
 
           {/* Card 1: Soil Moisture */}
           <div className="card-fs mc-fs">
             <div className="h">
-              <span>Soil Moisture</span>
-              <small>SMAP ROOT-ZONE</small>
+              <span>{isBn ? "মাটির আর্দ্রতা" : "Soil Moisture"}</span>
+              <small>{isBn ? "SMAP মূল অঞ্চল" : "SMAP ROOT-ZONE"}</small>
             </div>
             <div className="d">
               <b>{(selectedField.telemetry.smapVwc * 100).toFixed(1)} %</b>
               <small className="lab-fs" style={{ textTransform: "none" }}>
-                Optimal capacity: 28-36%
+                {isBn ? "অনুকূল ধারণক্ষমতা: ২৮-৩৬%" : "Optimal capacity: 28-36%"}
               </small>
             </div>
             <div style={{ height: "36px" }}>
@@ -158,13 +163,13 @@ function FieldMapPage() {
           {/* Card 2: Evapotranspiration */}
           <div className="card-fs mc-fs">
             <div className="h">
-              <span>Evapotranspiration</span>
-              <small>OpenET MONTHLY</small>
+              <span>{isBn ? "বাষ্পীভবন (ET)" : "Evapotranspiration"}</span>
+              <small>{isBn ? "OpenET মাসিক" : "OpenET MONTHLY"}</small>
             </div>
             <div className="d">
               <b>{Math.round(selectedField.telemetry.etaMmDay * 30)} mm</b>
               <small className="lab-fs" style={{ textTransform: "none" }}>
-                Water loss benchmark: normal
+                {isBn ? "পানি ক্ষয় স্তর: স্বাভাবিক" : "Water loss benchmark: normal"}
               </small>
             </div>
             <div className="bars-fs">
@@ -177,13 +182,15 @@ function FieldMapPage() {
           {/* Card 3: Surface Temperature */}
           <div className="card-fs mc-fs">
             <div className="h">
-              <span>Surface Temp</span>
-              <small>ECOSTRESS THERMAL</small>
+              <span>{isBn ? "ভূপৃষ্ঠের তাপমাত্রা" : "Surface Temp"}</span>
+              <small>{isBn ? "ECOSTRESS থার্মাল" : "ECOSTRESS THERMAL"}</small>
             </div>
             <div className="d">
               <b>{selectedField.telemetry.lstC.toFixed(1)} °C</b>
               <small className="lab-fs" style={{ textTransform: "none" }}>
-                {selectedField.telemetry.lstC > 34 ? "Heat anomaly active" : "No critical heat anomalies"}
+                {selectedField.telemetry.lstC > 34
+                  ? (isBn ? "তাপপ্রবাহ ঝুঁকি সক্রিয়" : "Heat anomaly active")
+                  : (isBn ? "ঝুঁকিমুক্ত তাপমাত্রা" : "No critical heat anomalies")}
               </small>
             </div>
             <div className="grad-fs" />
@@ -192,13 +199,15 @@ function FieldMapPage() {
           {/* Card 4: NDVI */}
           <div className="card-fs mc-fs">
             <div className="h">
-              <span>NDVI</span>
-              <small>LANDSAT TIME-SERIES</small>
+              <span>{isBn ? "গাছপালা সূচক (NDVI)" : "NDVI"}</span>
+              <small>{isBn ? "ল্যান্ডস্যাট সময়-সারি" : "LANDSAT TIME-SERIES"}</small>
             </div>
             <div className="d">
               <b>{selectedField.telemetry.ndvi.toFixed(2)} Max</b>
               <small className="lab-fs" style={{ textTransform: "none" }}>
-                {selectedField.telemetry.ndvi > 0.6 ? "Healthy dense canopy" : "Moderate canopy cover"}
+                {selectedField.telemetry.ndvi > 0.6
+                  ? (isBn ? "ঘন স্বাস্থ্যকর ফসল" : "Healthy dense canopy")
+                  : (isBn ? "মধ্যম ঘনত্বের ফসল" : "Moderate canopy cover")}
               </small>
             </div>
             <div style={{ height: "36px" }}>
@@ -213,15 +222,15 @@ function FieldMapPage() {
           {/* SoilGrids Characteristics */}
           <div className="card-fs p-3 space-y-1.5 font-mono text-[11px] bg-secondary/20">
             <div className="flex justify-between text-muted-foreground">
-              <span>Soil Texture:</span>
+              <span>{isBn ? "মাটির প্রকৃতি:" : "Soil Texture:"}</span>
               <span className="text-foreground capitalize">{selectedField.soil.texture}</span>
             </div>
             <div className="flex justify-between text-muted-foreground">
-              <span>Soil pH:</span>
+              <span>{isBn ? "মাটির পিএইচ (pH):" : "Soil pH:"}</span>
               <span className="text-cyan-400 font-semibold">{selectedField.soil.ph.toFixed(1)}</span>
             </div>
             <div className="flex justify-between text-muted-foreground">
-              <span>Organic Carbon:</span>
+              <span>{isBn ? "জৈব কার্বন:" : "Organic Carbon:"}</span>
               <span className="text-emerald-400 font-semibold">
                 {selectedField.soil.organicCarbonPct.toFixed(2)} %
               </span>
@@ -233,8 +242,12 @@ function FieldMapPage() {
             className="card-fs p-3 font-mono text-xs flex items-center justify-between hover:border-cyan-500/50 transition-colors group"
           >
             <div className="space-y-0.5">
-              <span className="text-[10px] text-cyan-400 block font-bold">NASA EARTHDATA OFFLINE CACHE</span>
-              <span className="text-slate-400 text-[11px] block">Download SMAP &amp; Landsat GeoJSON</span>
+              <span className="text-[10px] text-cyan-400 block font-bold">
+                {isBn ? "নাসা আর্থডাটা অফলাইন ক্যাশ" : "NASA EARTHDATA OFFLINE CACHE"}
+              </span>
+              <span className="text-slate-400 text-[11px] block">
+                {isBn ? "SMAP ও Landsat উপাত্ত ডাউনলোড করুন" : "Download SMAP & Landsat GeoJSON"}
+              </span>
             </div>
             <span className="text-cyan-400 group-hover:translate-x-1 transition-transform">→</span>
           </Link>

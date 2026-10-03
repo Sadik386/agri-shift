@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Suspense, lazy, useState } from "react";
 import { AppTopbar } from "@/components/fieldshift/app-topbar";
 import { FIELDS } from "@/lib/fieldshift/data";
+import { useLang } from "@/lib/i18n";
 
 const GlobeScene = lazy(() =>
   import("@/components/fieldshift/globe-scene").then((m) => ({ default: m.GlobeScene })),
@@ -12,6 +13,8 @@ export const Route = createFileRoute("/globe")({
 });
 
 function GlobePage() {
+  const { lang } = useLang();
+  const isBn = lang === "bn";
   const [view3D, setView3D] = useState(true);
   const field = FIELDS[0]!;
 
@@ -24,83 +27,85 @@ function GlobePage() {
         <aside className="side-fs">
           <span className="mono" style={{ fontSize: "11px", color: "var(--cy)" }}>
             <i className="dot-fs" />
-            NASA SATELLITE COMMAND
+            {isBn ? "নাসা স্যাটেলাইট কমান্ড" : "NASA SATELLITE COMMAND"}
           </span>
 
           <h2 className="lx" style={{ fontSize: "22px" }}>
-            Orbital Assets
+            {isBn ? "কক্ষপথীয় স্যাটেলাইট" : "Orbital Assets"}
           </h2>
 
           <p className="text-xs text-muted-foreground leading-relaxed">
-            Monitor active Earth-observation missions feeding the field model.
+            {isBn
+              ? "কৃষি ও আবহাওয়া মডেলের জন্য সক্রিয় নাসা পৃথিবী-পর্যবেক্ষণ মিশনসমূহ।"
+              : "Monitor active Earth-observation missions feeding the field model."}
           </p>
 
           <div className="card-fs sat-fs">
             <div className="h">
-              <span>SMAP (Soil Moisture)</span>
-              <span className="bd-fs">ACTIVE</span>
+              <span>SMAP ({isBn ? "মাটির আর্দ্রতা" : "Soil Moisture"})</span>
+              <span className="bd-fs">{isBn ? "সক্রিয়" : "ACTIVE"}</span>
             </div>
             <div className="kv-fs">
               <div>
-                <small className="lab-fs">Orbit altitude</small>
+                <small className="lab-fs">{isBn ? "উচ্চতা" : "Orbit altitude"}</small>
                 <b>685 km</b>
               </div>
               <div>
-                <small className="lab-fs">Revisit cycle</small>
-                <b>3 days</b>
+                <small className="lab-fs">{isBn ? "রিভিজিট সাইকেল" : "Revisit cycle"}</small>
+                <b>{isBn ? "৩ দিন" : "3 days"}</b>
               </div>
             </div>
             <small
               className="lab-fs"
               style={{ borderTop: "1px solid var(--line)", paddingTop: "8px" }}
             >
-              ↻ SYNC: 04M_AGO
+              ↻ {isBn ? "সিঙ্ক: ৪ মিনিট আগে" : "SYNC: 04M_AGO"}
             </small>
           </div>
 
           <div className="card-fs sat-fs">
             <div className="h">
               <span>Landsat 8/9</span>
-              <span className="bd-fs">ACTIVE</span>
+              <span className="bd-fs">{isBn ? "সক্রিয়" : "ACTIVE"}</span>
             </div>
             <div className="kv-fs">
               <div>
-                <small className="lab-fs">Orbit altitude</small>
+                <small className="lab-fs">{isBn ? "উচ্চতা" : "Orbit altitude"}</small>
                 <b>705 km</b>
               </div>
               <div>
-                <small className="lab-fs">Revisit cycle</small>
-                <b>8 days</b>
+                <small className="lab-fs">{isBn ? "রিভিজিট সাইকেল" : "Revisit cycle"}</small>
+                <b>{isBn ? "৮ দিন" : "8 days"}</b>
               </div>
             </div>
             <small
               className="lab-fs"
               style={{ borderTop: "1px solid var(--line)", paddingTop: "8px" }}
             >
-              ↻ SYNC: 12H_AGO
+              ↻ {isBn ? "সিঙ্ক: ১২ ঘণ্টা আগে" : "SYNC: 12H_AGO"}
             </small>
           </div>
 
           <div className="card-fs sat-fs">
             <div className="h">
               <span>ECOSTRESS</span>
-              <span className="bd-fs a">STATION_KEEP</span>
+              <span className="bd-fs a">{isBn ? "সক্রিয়" : "STATION_KEEP"}</span>
             </div>
             <div className="kv-fs">
               <div>
-                <small className="lab-fs">Orbit altitude</small>
+                <small className="lab-fs">{isBn ? "উচ্চতা" : "Orbit altitude"}</small>
                 <b>400 km</b>
               </div>
               <div>
-                <small className="lab-fs">Revisit cycle</small>
-                <b>4 days</b>
+                <small className="lab-fs">{isBn ? "রিভিজিট সাইকেল" : "Revisit cycle"}</small>
+                <b>{isBn ? "৪ দিন" : "4 days"}</b>
               </div>
             </div>
             <small
               className="lab-fs"
               style={{ borderTop: "1px solid var(--line)", paddingTop: "8px" }}
             >
-              ↻ SYNC: 02H_AGO
+              ↻ {isBn ? "সিঙ্ক: ২ ঘণ্টা আগে" : "SYNC: 02H_AGO"}
             </small>
           </div>
 
@@ -110,14 +115,14 @@ function GlobePage() {
               className="btn-fs fill w-full"
               style={{ justifyContent: "center", height: "45px" }}
             >
-              Select Target Field ›
+              {isBn ? "পাইলট ফিল্ড দেখুন ›" : "Select Target Field ›"}
             </Link>
             <Link
               to="/datasets"
               className="btn-fs w-full text-xs font-mono"
               style={{ justifyContent: "center", height: "38px" }}
             >
-              ◈ Offline NASA Datasets (7)
+              ◈ {isBn ? "নাসা সংরক্ষিত উপাত্ত (৭টি)" : "Offline NASA Datasets (7)"}
             </Link>
           </div>
         </aside>
@@ -133,7 +138,7 @@ function GlobePage() {
                   view3D ? "bg-primary text-primary-foreground font-semibold" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                3D Interactive WebGL
+                {isBn ? "৩D ওয়েবজিএল গ্লোব" : "3D Interactive WebGL"}
               </button>
               <button
                 onClick={() => setView3D(false)}
@@ -141,7 +146,7 @@ function GlobePage() {
                   !view3D ? "bg-primary text-primary-foreground font-semibold" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                Orbital Radar SVG
+                {isBn ? "অরবিটাল রাডার ভিউ" : "Orbital Radar SVG"}
               </button>
             </div>
 
@@ -150,7 +155,7 @@ function GlobePage() {
                 <Suspense
                   fallback={
                     <div className="flex h-full items-center justify-center font-mono text-[11px] tracking-[0.2em] text-muted-foreground">
-                      INITIALIZING 3D ORBITAL SIMULATION…
+                      {isBn ? "৩D অরবিটাল সিমুলেশন প্রস্তুত হচ্ছে…" : "INITIALIZING 3D ORBITAL SIMULATION…"}
                     </div>
                   }
                 >
@@ -243,22 +248,25 @@ function GlobePage() {
           {/* Telemetry Strip */}
           <div className="strip-fs">
             <span>
-              SATELLITES ON STATION: <b>5/5 ONLINE</b>
+              {isBn ? "কক্ষপথে স্যাটেলাইট:" : "SATELLITES ON STATION:"} <b>{isBn ? "৫/৫ অনলাইন" : "5/5 ONLINE"}</b>
             </span>
             <span>
-              GLOBAL DAILY SWATH COV: <b>94.2%</b>
+              {isBn ? "দৈনিক স্ক্যান কভারেজ:" : "GLOBAL DAILY SWATH COV:"} <b>94.2%</b>
             </span>
             <span>
-              TELEMETRY INGESTION RATE: <b>18.4 GB/s</b>
+              {isBn ? "টেলিমেট্রি প্রবাহের গতি:" : "TELEMETRY INGESTION RATE:"} <b>18.4 GB/s</b>
             </span>
             <span>
-              SCENES PROCESSED (24H): <b>1,402</b>
+              {isBn ? "প্রক্রিয়াজাত ফ্রেম (২৪ঘণ্টা):" : "SCENES PROCESSED (24H):"} <b>1,402</b>
             </span>
             <span>
-              ANOMALIES DETECTED: <b>0 ZERO_ERR</b>
+              {isBn ? "অস্বাভাবিক বিচ্যুতি:" : "ANOMALIES DETECTED:"} <b>0 ZERO_ERR</b>
             </span>
             <span>
-              OFFLINE CACHE: <Link to="/datasets" className="text-cyan-400 font-bold hover:underline">7 DATASETS EMBEDDED ›</Link>
+              {isBn ? "অফলাইন আর্কাইভ:" : "OFFLINE CACHE:"}{" "}
+              <Link to="/datasets" className="text-cyan-400 font-bold hover:underline">
+                {isBn ? "৭টি নাসা ডেটাসেট সংরক্ষিত ›" : "7 DATASETS EMBEDDED ›"}
+              </Link>
             </span>
           </div>
         </div>

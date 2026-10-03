@@ -6,6 +6,7 @@ import { formatBdt } from "@/lib/fieldshift/finance";
 import { cn } from "@/lib/utils";
 import type { Crop, FieldSite, RotationPlan } from "@/lib/fieldshift/types";
 import { Play, Pause, RotateCcw, Droplets, TrendingUp, ShieldCheck, Sparkles, Layers } from "lucide-react";
+import { useLang } from "@/lib/i18n";
 
 const SoilProfileScene = lazy(() =>
   import("./soil-profile-scene").then((m) => ({ default: m.SoilProfileScene })),
@@ -20,6 +21,8 @@ export function RotationPanel({
   selectedPlan: RotationPlan;
   onSelectPlan: (plan: RotationPlan) => void;
 }) {
+  const { lang } = useLang();
+  const isBn = lang === "bn";
   const [customCrops, setCustomCrops] = useState<[string, string, string]>(selectedPlan.cropIds);
   const [isCustom, setIsCustom] = useState(false);
   const [activeYearIndex, setActiveYearIndex] = useState(0);
@@ -50,7 +53,7 @@ export function RotationPanel({
         id: "custom",
         label: `${CROPS[customCrops[0]]?.name || "Year 1"} → ${CROPS[customCrops[1]]?.name || "Year 2"} → ${CROPS[customCrops[2]]?.name || "Year 3"}`,
         cropIds: customCrops,
-        note: "Custom user-configured 3-year crop sequence.",
+        note: isBn ? "ব্যবহারকারীর নির্ধারিত ৩-বছরের নিজস্ব ফসল বিন্যাস।" : "Custom user-configured 3-year crop sequence.",
       }
     : selectedPlan;
 
@@ -67,7 +70,7 @@ export function RotationPanel({
       id: "custom",
       label: `${CROPS[updated[0]]?.name} → ${CROPS[updated[1]]?.name} → ${CROPS[updated[2]]?.name}`,
       cropIds: updated,
-      note: "Custom user-configured 3-year crop sequence.",
+      note: isBn ? "ব্যবহারকারীর নির্ধারিত ৩-বছরের নিজস্ব ফসল বিন্যাস।" : "Custom user-configured 3-year crop sequence.",
     });
   };
 
@@ -78,23 +81,25 @@ export function RotationPanel({
   };
 
   const stages = [
-    { label: "Germination", val: 0.15 },
-    { label: "Vegetative", val: 0.45 },
-    { label: "Flowering", val: 0.75 },
-    { label: "Harvest", val: 1.0 },
+    { label: isBn ? "অঙ্কুরোদগম" : "Germination", val: 0.15 },
+    { label: isBn ? "অঙ্গজ বৃদ্ধি" : "Vegetative", val: 0.45 },
+    { label: isBn ? "ফুল ফোটা" : "Flowering", val: 0.75 },
+    { label: isBn ? "ফসল তোলা" : "Harvest", val: 1.0 },
   ];
 
   return (
     <Panel
-      eyebrow="Module 03"
-      title="3-year crop rotation planner & dynamic soil profile"
+      eyebrow={isBn ? "মডিউল ০৩" : "Module 03"}
+      title={isBn ? "৩-বছরের ফসল পর্যায়ক্রম পরিকল্পনাকারী ও মাটির স্তর" : "3-year crop rotation planner & dynamic soil profile"}
       right={
         <div className="flex items-center gap-2">
           <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground hidden sm:inline">
-            Preservation Index:
+            {isBn ? "সংরক্ষণ সূচক:" : "Preservation Index:"}
           </span>
           <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded border border-emerald-500/40 bg-emerald-500/10 text-emerald-400">
-            {outcome.waterSavingPct > 0 ? `+${outcome.waterSavingPct}% WATER SAVED` : "BASELINE DRAW"}
+            {outcome.waterSavingPct > 0 
+              ? (isBn ? `+${outcome.waterSavingPct}% পানি সাশ্রয়` : `+${outcome.waterSavingPct}% WATER SAVED`) 
+              : (isBn ? "বেসলাইন ব্যবহার" : "BASELINE DRAW")}
           </span>
         </div>
       }
@@ -103,7 +108,7 @@ export function RotationPanel({
         {/* Preset Rotation Plan Selector */}
         <div>
           <label className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground mb-2 block">
-            Select Rotation Strategy
+            {isBn ? "ফসল পর্যায়ক্রম কৌশল নির্বাচন করুন" : "Select Rotation Strategy"}
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
             {ROTATION_PLANS.map((plan) => {
@@ -148,15 +153,17 @@ export function RotationPanel({
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-3">
             <div>
               <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground">
-                Sequence Architecture (Click Year to preview 3D root zone)
+                {isBn ? "পর্যায়ক্রম কাঠামো (৩D মূল অঞ্চল দেখতে বছর নির্বাচন করুন)" : "Sequence Architecture (Click Year to preview 3D root zone)"}
               </p>
               <p className="text-xs text-foreground/80 mt-0.5">
-                Each year influences soil carbon accumulation and subsequent season fertilizer requirements.
+                {isBn
+                  ? "প্রতিটি বছর মাটির কার্বন সঞ্চয় ও পরবর্তী মৌসুমের সারের প্রয়োজনীয়তাকে প্রভাবিত করে।"
+                  : "Each year influences soil carbon accumulation and subsequent season fertilizer requirements."}
               </p>
             </div>
             {isCustom && (
               <span className="px-2 py-0.5 rounded font-mono text-[9px] uppercase tracking-wider bg-amber-500/10 border border-amber-500/30 text-amber-400">
-                Custom Configuration
+                {isBn ? "কাস্টম বিন্যাস" : "Custom Configuration"}
               </span>
             )}
           </div>
@@ -180,11 +187,11 @@ export function RotationPanel({
                 >
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-mono text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-                      Year {idx + 1}
+                      {isBn ? `${idx + 1}ম বছর` : `Year ${idx + 1}`}
                     </span>
                     {crop.nitrogenFixing && (
                       <span className="flex items-center gap-1 font-mono text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                        <Sparkles className="w-2.5 h-2.5" /> N-FIXING
+                        <Sparkles className="w-2.5 h-2.5" /> {isBn ? "নাইট্রোজেন সংবন্ধন" : "N-FIXING"}
                       </span>
                     )}
                   </div>
@@ -211,23 +218,23 @@ export function RotationPanel({
 
                   <div className="space-y-1.5 font-mono text-[11px] border-t border-border/50 pt-2.5">
                     <div className="flex justify-between text-muted-foreground">
-                      <span>Water Need:</span>
+                      <span>{isBn ? "পানির চাহিদা:" : "Water Need:"}</span>
                       <span className="text-foreground">{crop.waterNeedMm} mm</span>
                     </div>
                     <div className="flex justify-between text-muted-foreground">
-                      <span>Irrigation Deficit:</span>
+                      <span>{isBn ? "সেচ ঘাটতি:" : "Irrigation Deficit:"}</span>
                       <span className={yearData && yearData.irrigationMm > 500 ? "text-amber-400" : "text-cyan-400"}>
                         {yearData?.irrigationMm ?? 0} mm
                       </span>
                     </div>
                     <div className="flex justify-between text-muted-foreground">
-                      <span>Soil Organic Carbon:</span>
+                      <span>{isBn ? "জৈব কার্বন:" : "Soil Organic Carbon:"}</span>
                       <span className="text-emerald-400 font-medium">{yearData?.socPct}%</span>
                     </div>
                     <div className="flex justify-between text-muted-foreground">
-                      <span>Est. Net Margin:</span>
+                      <span>{isBn ? "আনুমানিক লাভ:" : "Est. Net Margin:"}</span>
                       <span className="text-foreground font-medium">
-                        {yearData ? formatBdt(yearData.netProfitBdtAcre) : "৳0"}/ac
+                        {yearData ? formatBdt(yearData.netProfitBdtAcre) : "৳0"}{isBn ? "/একর" : "/ac"}
                       </span>
                     </div>
                   </div>
@@ -242,12 +249,14 @@ export function RotationPanel({
           {/* 3D Soil Profile Viewer */}
           <SceneFrame
             className="h-[380px] lg:h-[440px]"
-            caption={`Soil Horizon & Root System: ${activeCrop.name} · Root Depth ${Math.round(activeCrop.rootDepthCm * growth)} cm`}
+            caption={isBn 
+              ? `মাটির স্তর ও মূল তন্ত্র: ${activeCrop.name} · মূলের গভীরতা ${Math.round(activeCrop.rootDepthCm * growth)} সেমি`
+              : `Soil Horizon & Root System: ${activeCrop.name} · Root Depth ${Math.round(activeCrop.rootDepthCm * growth)} cm`}
           >
             <Suspense
               fallback={
                 <div className="flex h-full items-center justify-center font-mono text-[11px] tracking-[0.2em] text-muted-foreground">
-                  COMPUTING STRATIGRAPHY & ROOT MORPHOLOGY…
+                  {isBn ? "মাটির স্তর ও মূলের গঠন বিশ্লেষণ করা হচ্ছে…" : "COMPUTING STRATIGRAPHY & ROOT MORPHOLOGY…"}
                 </div>
               }
             >
@@ -266,7 +275,7 @@ export function RotationPanel({
                 title={isPlaying ? "Pause simulation" : "Play seasonal growth cycle"}
               >
                 {isPlaying ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
-                {isPlaying ? "PAUSE" : "PLAY CYCLE"}
+                {isPlaying ? (isBn ? "বিরতি" : "PAUSE") : (isBn ? "বৃদ্ধি অ্যানিমেশন" : "PLAY CYCLE")}
               </button>
               <button
                 onClick={() => {
@@ -303,7 +312,7 @@ export function RotationPanel({
             {/* Stratigraphy Legend Overlay */}
             <div className="pointer-events-none absolute right-3 bottom-8 z-20 space-y-1 rounded border border-border/70 bg-background/85 p-2 backdrop-blur-md">
               <p className="font-mono text-[8px] uppercase tracking-[0.2em] text-muted-foreground mb-1">
-                Soil Stratigraphy
+                {isBn ? "মাটির স্তরবিন্যাস" : "Soil Stratigraphy"}
               </p>
               {field.soilLayers.map((l) => (
                 <div key={l.label} className="flex items-center gap-2 font-mono text-[9px]">
@@ -319,31 +328,31 @@ export function RotationPanel({
           <div className="space-y-3 flex flex-col justify-between">
             <div className="grid grid-cols-2 gap-3">
               <StatusBadge
-                label="Groundwater Drawdown"
+                label={isBn ? "ভূগর্ভস্থ পানির হ্রাস" : "Groundwater Drawdown"}
                 value={`${outcome.waterSavingPct > 0 ? "-" : "+"}${Math.abs(outcome.waterSavingPct)}`}
                 unit="%"
                 tone={outcome.waterSavingPct >= 20 ? "green" : outcome.waterSavingPct > 0 ? "cyan" : "rose"}
-                hint="Relative to 3-year continuous Boro practice"
+                hint={isBn ? "টানা ৩ বছর বোরো চাষের তুলনায়" : "Relative to 3-year continuous Boro practice"}
               />
               <StatusBadge
-                label="Soil Organic Carbon"
+                label={isBn ? "মাটির জৈব কার্বন" : "Soil Organic Carbon"}
                 value={`+${outcome.socGainPct}`}
                 unit="%"
                 tone="green"
-                hint="3-year microbial biomass accumulation"
+                hint={isBn ? "৩ বছরে অণুজীবীয় বায়োমাস সঞ্চয়" : "3-year microbial biomass accumulation"}
               />
               <StatusBadge
-                label="N Fertilizer Savings"
+                label={isBn ? "নাইট্রোজেন সার সাশ্রয়" : "N Fertilizer Savings"}
                 value={`${outcome.fertilizerSavingPct}`}
                 unit="%"
                 tone={outcome.fertilizerSavingPct > 0 ? "green" : "amber"}
-                hint="Nitrogen fixed via rhizobia root nodules"
+                hint={isBn ? "রাইজোবিয়াম নডিউল দ্বারা নাইট্রোজেন সংবন্ধন" : "Nitrogen fixed via rhizobia root nodules"}
               />
               <StatusBadge
-                label="3-Yr Cumulative Profit"
+                label={isBn ? "৩ বছরের মোট নিট মুনাফা" : "3-Yr Cumulative Profit"}
                 value={formatBdt(outcome.totalProfitBdtAcre)}
                 tone="cyan"
-                hint="Net margin across all 3 rotation seasons"
+                hint={isBn ? "৩টি পর্যায়ক্রমিক মৌসুমের মোট নিট লাভ" : "Net margin across all 3 rotation seasons"}
               />
             </div>
 
@@ -351,15 +360,17 @@ export function RotationPanel({
             <div className="rounded-lg border border-border/80 bg-secondary/30 p-3.5 space-y-2">
               <div className="flex items-center gap-2 text-foreground font-semibold text-xs">
                 <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                Resilience & Aquifer Protection Analysis
+                {isBn ? "সহনশীলতা ও ভূগর্ভস্থ পানি সুরক্ষা বিশ্লেষণ" : "Resilience & Aquifer Protection Analysis"}
               </div>
               <p className="text-[11px] leading-relaxed text-muted-foreground">
-                In Bangladesh's northwestern drought-prone Barind tract and char ecosystems, continuous flood-irrigated Boro rice causes groundwater table depletion of up to 0.75m/year. Introducing deep-rooting Sorghum and nitrogen-fixing Mungbean cover crops recovers subsoil hydraulic conductivity, suppresses weed cycles, and breaks root-knot nematode lifecycles without chemical fumigation.
+                {isBn
+                  ? "বাংলাদেশের উত্তর-পশ্চিমাঞ্চলের খরাপ্রবণ বরেন্দ্র অঞ্চল ও চর ইকোসিস্টেমে একটানা প্লাবন সেচযুক্ত বোরো ধান চাষের ফলে ভূগর্ভস্থ পানির স্তর বছরে ০.৭৫ মিটার পর্যন্ত নিচে নেমে যাচ্ছে। গভীর মূলযুক্ত জোয়ার ও নাইট্রোজেন-সংবন্ধনকারী মুগডাল অন্তর্ভুক্ত করলে মাটির আর্দ্রতা ধারণ ক্ষমতা পুনরুদ্ধার হয়, আগাছা দমন হয় এবং রাসায়নিক কীটনাশক ছাড়াই মূলের নেমাটোড চক্র ধ্বংস হয়।"
+                  : "In Bangladesh's northwestern drought-prone Barind tract and char ecosystems, continuous flood-irrigated Boro rice causes groundwater table depletion of up to 0.75m/year. Introducing deep-rooting Sorghum and nitrogen-fixing Mungbean cover crops recovers subsoil hydraulic conductivity, suppresses weed cycles, and breaks root-knot nematode lifecycles without chemical fumigation."}
               </p>
               <div className="pt-2 border-t border-border/60 flex items-center justify-between font-mono text-[10px] text-muted-foreground">
-                <span>Selected Crop Canopy Vigour:</span>
+                <span>{isBn ? "নির্বাচিত ফসলের ক্যানোপি শক্তি:" : "Selected Crop Canopy Vigour:"}</span>
                 <span className="font-semibold text-foreground" style={{ color: activeCrop.canopyColor }}>
-                  {activeCrop.emoji} {activeCrop.name} (NDVI Ref: {(activeCrop.droughtSensitivity < 0.008 ? "High Resilience" : "Moderate")})
+                  {activeCrop.emoji} {activeCrop.name} ({isBn ? "সহনশীলতা: " : "NDVI Ref: "}{activeCrop.droughtSensitivity < 0.008 ? (isBn ? "উচ্চ সহনশীল" : "High Resilience") : (isBn ? "মাঝারি" : "Moderate")})
                 </span>
               </div>
             </div>

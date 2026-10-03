@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 import { AppTopbar } from "@/components/fieldshift/app-topbar";
 import { Sparkline } from "@/components/fieldshift/sparkline";
+import { useLang } from "@/lib/i18n";
 import {
   NASA_OFFLINE_DATASETS,
   type NasaDataset,
@@ -31,18 +32,20 @@ export const Route = createFileRoute("/datasets")({
   component: DatasetsPage,
 });
 
-const CATEGORIES: Array<"ALL" | DatasetCategory> = [
-  "ALL",
-  "Soil Moisture",
-  "Canopy & NDVI",
-  "Thermal & ET",
-  "Evapotranspiration",
-  "Groundwater & Aquifer",
-  "Precipitation",
-  "Radar & SAR",
+const CATEGORIES: Array<{ key: "ALL" | DatasetCategory; en: string; bn: string }> = [
+  { key: "ALL", en: "ALL", bn: "সকল উপাত্ত" },
+  { key: "Soil Moisture", en: "Soil Moisture", bn: "মাটির আর্দ্রতা" },
+  { key: "Canopy & NDVI", en: "Canopy & NDVI", bn: "গাছের আচ্ছাদন ও NDVI" },
+  { key: "Thermal & ET", en: "Thermal & ET", bn: "তাপীয় ও বাষ্পীভবন" },
+  { key: "Evapotranspiration", en: "Evapotranspiration", bn: "বাষ্পীভবন (ET)" },
+  { key: "Groundwater & Aquifer", en: "Groundwater & Aquifer", bn: "ভূগর্ভস্থ পানি ও একুইফার" },
+  { key: "Precipitation", en: "Precipitation", bn: "বৃষ্টিপাত (GPM)" },
+  { key: "Radar & SAR", en: "Radar & SAR", bn: "রাডার ও সার (SAR)" },
 ];
 
 function DatasetsPage() {
+  const { lang } = useLang();
+  const isBn = lang === "bn";
   const [selectedCategory, setSelectedCategory] = useState<"ALL" | DatasetCategory>("ALL");
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>("smap-l4-smgp");
@@ -76,21 +79,24 @@ function DatasetsPage() {
             <div className="space-y-3 max-w-3xl">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-400/40 bg-cyan-500/10 font-mono text-[11px] text-cyan-400 uppercase tracking-wider">
                 <HardDrive className="w-3.5 h-3.5 animate-pulse text-cyan-400" />
-                <span>OFFLINE LOCAL REPOSITORY · NASA EARTHDATA EMBEDDED</span>
+                <span>
+                  {isBn ? "অফলাইন স্থানীয় ভান্ডার · নাসা আর্থডাটা সংযুক্ত" : "OFFLINE LOCAL REPOSITORY · NASA EARTHDATA EMBEDDED"}
+                </span>
               </div>
 
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight">
-                Offline NASA Datasets Archive
+                {isBn ? "নাসা অফলাইন আর্থ অবজারভেশন উপাত্ত সংগ্রহশালা" : "Offline NASA Datasets Archive"}
               </h1>
 
               <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
-                Full-featured, offline-ready Earth Observation telemetry calibrated for Bangladesh agro-climatic zones.
-                Designed for field agronomists, remote farming communities, and researchers operating in zero-connectivity environments.
+                {isBn
+                  ? "বাংলাদেশের কৃষি-জলবায়ু অঞ্চলের জন্য ক্যালিব্রেট করা সম্পূর্ণ অফলাইন সক্ষম ভূ-পর্যবেক্ষণ টেলিমেট্রি। বিদ্যুৎ বা ইন্টারনেট সংযোগহীন চরাঞ্চল ও উপকূলীয় কৃষকদের জন্য বিশেষভাবে সংরক্ষিত।"
+                  : "Full-featured, offline-ready Earth Observation telemetry calibrated for Bangladesh agro-climatic zones. Designed for field agronomists, remote farming communities, and researchers operating in zero-connectivity environments."}
               </p>
 
               <div className="flex flex-wrap items-center gap-4 pt-1 font-mono text-xs text-slate-400">
                 <span className="flex items-center gap-1.5 text-emerald-400">
-                  <CheckCircle2 className="w-4 h-4" /> 7 Missions Synchronized &amp; Cached
+                  <CheckCircle2 className="w-4 h-4" /> {isBn ? "৭টি নাসা স্যাটেলাইট মিশন সিঙ্ক ও ক্যাশড" : "7 Missions Synchronized & Cached"}
                 </span>
                 <span>•</span>
                 <span className="flex items-center gap-1.5 text-cyan-400">
@@ -107,10 +113,10 @@ function DatasetsPage() {
                 title="Download all 7 NASA datasets as a complete JSON package"
               >
                 <Download className="w-4 h-4" />
-                <span>DOWNLOAD ARCHIVE (.JSON)</span>
+                <span>{isBn ? "সম্পূর্ণ আর্কাইভ ডাউনলোড (.JSON)" : "DOWNLOAD ARCHIVE (.JSON)"}</span>
               </button>
               <span className="text-[10px] font-mono text-slate-400 text-center">
-                100% Client-Side · No Internet Needed
+                {isBn ? "১০০% ক্লায়েন্ট-সাইড · কোনো ইন্টারনেটের প্রয়োজন নেই" : "100% Client-Side · No Internet Needed"}
               </span>
             </div>
           </div>
@@ -123,7 +129,7 @@ function DatasetsPage() {
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder="Search datasets, mission, instrument, DAAC..."
+              placeholder={isBn ? "ডেটাসেট, মিশন, সেন্সর বা DAAC খুঁজুন..." : "Search datasets, mission, instrument, DAAC..."}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-9 pr-4 py-2 rounded-lg bg-slate-900/80 border border-slate-800 text-white font-mono text-xs placeholder:text-slate-500 focus:outline-none focus:border-cyan-500 transition-colors"
@@ -134,15 +140,15 @@ function DatasetsPage() {
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none font-mono text-xs">
             {CATEGORIES.map((cat) => (
               <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
+                key={cat.key}
+                onClick={() => setSelectedCategory(cat.key)}
                 className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors border ${
-                  selectedCategory === cat
+                  selectedCategory === cat.key
                     ? "bg-cyan-500/20 border-cyan-400 text-cyan-300 font-bold"
                     : "bg-slate-900/60 border-slate-800 text-slate-400 hover:text-white hover:border-slate-700"
                 }`}
               >
-                {cat}
+                {isBn ? cat.bn : cat.en}
               </button>
             ))}
           </div>
@@ -193,7 +199,7 @@ function DatasetsPage() {
                     {/* 12-month Trend Preview */}
                     <div className="hidden sm:flex flex-col items-end gap-1">
                       <span className="font-mono text-[10px] text-slate-400 uppercase tracking-wider">
-                        12-Mo Bangladesh Trend
+                        {isBn ? "১২ মাসের বাংলাদেশ ট্রেন্ড" : "12-Mo Bangladesh Trend"}
                       </span>
                       <div className="w-28 h-7">
                         <Sparkline data={ds.monthlyTrend} color="#00e5ff" height={28} />
@@ -215,23 +221,31 @@ function DatasetsPage() {
                     {/* Metadata Grid */}
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 font-mono text-xs">
                       <div className="p-3 rounded-lg bg-slate-900/60 border border-slate-800">
-                        <span className="text-[10px] text-slate-400 block uppercase">Mission / Sensor</span>
+                        <span className="text-[10px] text-slate-400 block uppercase">
+                          {isBn ? "মিশন / সেন্সর" : "Mission / Sensor"}
+                        </span>
                         <b className="text-white text-xs mt-1 block truncate">{ds.mission}</b>
                         <span className="text-[10px] text-cyan-400 block">{ds.instrument}</span>
                       </div>
 
                       <div className="p-3 rounded-lg bg-slate-900/60 border border-slate-800">
-                        <span className="text-[10px] text-slate-400 block uppercase">Spatial Resolution</span>
+                        <span className="text-[10px] text-slate-400 block uppercase">
+                          {isBn ? "স্থানিক রেজোলিউশন" : "Spatial Resolution"}
+                        </span>
                         <b className="text-white text-xs mt-1 block truncate">{ds.spatialResolution}</b>
                       </div>
 
                       <div className="p-3 rounded-lg bg-slate-900/60 border border-slate-800">
-                        <span className="text-[10px] text-slate-400 block uppercase">Temporal Revisit</span>
+                        <span className="text-[10px] text-slate-400 block uppercase">
+                          {isBn ? "পুনরাবৃত্তি সময়কাল" : "Temporal Revisit"}
+                        </span>
                         <b className="text-white text-xs mt-1 block truncate">{ds.temporalResolution}</b>
                       </div>
 
                       <div className="p-3 rounded-lg bg-slate-900/60 border border-slate-800">
-                        <span className="text-[10px] text-slate-400 block uppercase">Archive DAAC</span>
+                        <span className="text-[10px] text-slate-400 block uppercase">
+                          {isBn ? "সংরক্ষণাগার DAAC" : "Archive DAAC"}
+                        </span>
                         <b className="text-white text-xs mt-1 block truncate">{ds.daac}</b>
                         <span className="text-[10px] text-slate-400 block">DOI: {ds.doi}</span>
                       </div>
@@ -242,7 +256,7 @@ function DatasetsPage() {
                       <ShieldCheck className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
                       <div>
                         <b className="font-mono text-cyan-300 block uppercase mb-1">
-                          Agronomic Relevance for Bangladesh Climate Adaptation:
+                          {isBn ? "বাংলাদেশের জলবায়ু অভিযোজনে কৃষিপ্রাসঙ্গিকতা:" : "Agronomic Relevance for Bangladesh Climate Adaptation:"}
                         </b>
                         <p className="leading-relaxed">{ds.agronomicRelevance}</p>
                       </div>
@@ -253,7 +267,9 @@ function DatasetsPage() {
                       <div className="flex items-center justify-between">
                         <h3 className="font-mono text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
                           <Layers className="w-4 h-4 text-cyan-400" />
-                          <span>Locally Cached Granules ({ds.offlineGranules.length} Agricultural Zones)</span>
+                          <span>
+                            {isBn ? `স্থানীয়ভাবে সংরক্ষিত গ্র্যানিউল (${ds.offlineGranules.length}টি কৃষি অঞ্চল)` : `Locally Cached Granules (${ds.offlineGranules.length} Agricultural Zones)`}
+                          </span>
                         </h3>
                         <div className="flex items-center gap-2 font-mono text-xs">
                           <button
@@ -279,13 +295,13 @@ function DatasetsPage() {
                         <table className="w-full text-left font-mono text-xs">
                           <thead className="bg-slate-900/90 text-slate-400 uppercase text-[10px] border-b border-slate-800">
                             <tr>
-                              <th className="py-2.5 px-3">Field Site</th>
-                              <th className="py-2.5 px-3">District</th>
-                              <th className="py-2.5 px-3">Coordinates</th>
-                              <th className="py-2.5 px-3">Observed Value</th>
-                              <th className="py-2.5 px-3">Anomaly</th>
-                              <th className="py-2.5 px-3">Quality</th>
-                              <th className="py-2.5 px-3">Metadata Flag</th>
+                              <th className="py-2.5 px-3">{isBn ? "ক্ষেতের অবস্থান" : "Field Site"}</th>
+                              <th className="py-2.5 px-3">{isBn ? "জেলা" : "District"}</th>
+                              <th className="py-2.5 px-3">{isBn ? "স্থানাঙ্ক" : "Coordinates"}</th>
+                              <th className="py-2.5 px-3">{isBn ? "পর্যবেক্ষিত মান" : "Observed Value"}</th>
+                              <th className="py-2.5 px-3">{isBn ? "বিচ্যুতি" : "Anomaly"}</th>
+                              <th className="py-2.5 px-3">{isBn ? "মান সূচক" : "Quality"}</th>
+                              <th className="py-2.5 px-3">{isBn ? "মেটাডাটা ফ্ল্যাগ" : "Metadata Flag"}</th>
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-slate-800/60 bg-slate-900/40">
@@ -333,7 +349,7 @@ function DatasetsPage() {
                     {/* Scientific Parameters Breakdown */}
                     <div className="space-y-3 pt-2">
                       <h3 className="font-mono text-xs font-bold text-slate-400 uppercase tracking-wider">
-                        Measured Physical Variables &amp; Calibration Thresholds
+                        {isBn ? "পরিমাপকৃত ভৌত চলক ও ক্যালিব্রেশন পরিসীমা" : "Measured Physical Variables & Calibration Thresholds"}
                       </h3>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                         {ds.parameters.map((param) => (
@@ -364,9 +380,11 @@ function DatasetsPage() {
         {/* Bottom Navigation CTA */}
         <div className="p-6 rounded-xl border border-slate-800 bg-[#0d1524]/60 flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs">
           <div>
-            <b className="text-white block text-sm">Need to model rotations with these datasets?</b>
+            <b className="text-white block text-sm">
+              {isBn ? "এই ডেটাসেটগুলি দিয়ে ফসলের পর্যায়ক্রম মডেল করতে চান?" : "Need to model rotations with these datasets?"}
+            </b>
             <span className="text-slate-400">
-              Explore how SMAP, Landsat, and OpenET feed into the 3-Year Adaptive Cropping Gantt.
+              {isBn ? "SMAP, Landsat, এবং OpenET কীভাবে ৩-বছরের অভিযোজিত ক্রপ ক্যালেন্ডারে কাজ করে দেখুন।" : "Explore how SMAP, Landsat, and OpenET feed into the 3-Year Adaptive Cropping Gantt."}
             </span>
           </div>
           <div className="flex items-center gap-3 shrink-0">
@@ -374,13 +392,13 @@ function DatasetsPage() {
               to="/planner"
               className="px-4 py-2 rounded-lg bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 hover:bg-cyan-500/30 transition-colors font-bold"
             >
-              LAUNCH CROP PLANNER ›
+              {isBn ? "ক্রপ প্ল্যানার চালু করুন ›" : "LAUNCH CROP PLANNER ›"}
             </Link>
             <Link
               to="/field"
               className="px-4 py-2 rounded-lg bg-slate-800 text-slate-300 hover:bg-slate-700 transition-colors"
             >
-              3D TERRAIN VIEWER
+              {isBn ? "৩D ভূপ্রকৃতি ভিউয়ার" : "3D TERRAIN VIEWER"}
             </Link>
           </div>
         </div>

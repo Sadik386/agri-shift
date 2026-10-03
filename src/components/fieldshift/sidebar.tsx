@@ -3,6 +3,7 @@ import { FIELDS, CROPS, SATELLITES } from "@/lib/fieldshift/data";
 import { OriginDot } from "./ui";
 import { cn } from "@/lib/utils";
 import type { FieldSite, Crop } from "@/lib/fieldshift/types";
+import { useLang } from "@/lib/i18n";
 import {
   Satellite,
   Layers,
@@ -33,22 +34,36 @@ export function Sidebar({
   activeSection: string;
   onNavigateSection: (sectionId: string) => void;
 }) {
+  const { lang } = useLang();
+  const isBn = lang === "bn";
   const [fieldOpen, setFieldOpen] = useState(false);
   const [mobileRailOpen, setMobileRailOpen] = useState(false);
 
   const seasons = [
-    { id: "rabi", label: "Rabi (Winter)", desc: "High irrigation pressure · Groundwater critical" },
-    { id: "kharif-1", label: "Kharif-1 (Pre-Monsoon)", desc: "Ideal legume / green manure window" },
-    { id: "kharif-2", label: "Kharif-2 (Monsoon)", desc: "Rainfed paddy / flood inundation" },
+    {
+      id: "rabi",
+      label: isBn ? "রবি (শীতকালীন মৌসুম)" : "Rabi (Winter)",
+      desc: isBn ? "তীব্র সেচ চাপ · ভূগর্ভস্থ পানির সংকট" : "High irrigation pressure · Groundwater critical",
+    },
+    {
+      id: "kharif-1",
+      label: isBn ? "খরিপ-১ (প্রাক-বর্ষা)" : "Kharif-1 (Pre-Monsoon)",
+      desc: isBn ? "ডাল ও সবুজ সার উৎপাদনের সময়" : "Ideal legume / green manure window",
+    },
+    {
+      id: "kharif-2",
+      label: isBn ? "খরিপ-২ (বর্ষাকাল)" : "Kharif-2 (Monsoon)",
+      desc: isBn ? "বৃষ্টি-নির্ভর ধান / প্লাবন ঝুঁকি" : "Rainfed paddy / flood inundation",
+    },
   ];
 
   const navItems = [
-    { id: "telemetry", label: "01 · Satellite Telemetry", icon: Satellite },
-    { id: "terrain", label: "02 · Field 3D Terrain", icon: Layers },
-    { id: "rotation", label: "03 · Rotation & Soil 3D", icon: Activity },
-    { id: "advisory", label: "04 · Smart Advisory", icon: AlertTriangle },
-    { id: "profit", label: "05 · Risk & Profit 3D", icon: TrendingUp },
-    { id: "regional", label: "06 · Regional Network", icon: Users },
+    { id: "telemetry", label: isBn ? "০১ · স্যাটেলাইট টেলিমেট্রি" : "01 · Satellite Telemetry", icon: Satellite },
+    { id: "terrain", label: isBn ? "০২ · ফিল্ড ৩D ভূ-প্রকৃতি" : "02 · Field 3D Terrain", icon: Layers },
+    { id: "rotation", label: isBn ? "০৩ · রোটেশন ও মাটি ৩D" : "03 · Rotation & Soil 3D", icon: Activity },
+    { id: "advisory", label: isBn ? "০৪ · স্মার্ট কৃষি পরামর্শ" : "04 · Smart Advisory", icon: AlertTriangle },
+    { id: "profit", label: isBn ? "০৫ · ঝুঁকি ও মুনাফা ৩D" : "05 · Risk & Profit 3D", icon: TrendingUp },
+    { id: "regional", label: isBn ? "০৬ · আঞ্চলিক নেটওয়ার্ক" : "06 · Regional Network", icon: Users },
   ];
 
   const currentCrop: Crop = CROPS[selectedField.currentCropId] ?? CROPS["maize"]!;
@@ -64,16 +79,16 @@ export function Sidebar({
                 <Radio className="w-3.5 h-3.5 animate-pulse" />
               </div>
               <h1 className="font-mono text-base font-bold tracking-wider text-foreground">
-                FIELD SHIFT
+                {isBn ? "এগ্রিশিফট" : "AGRISHIFT"}
               </h1>
             </div>
             <p className="font-mono text-[9px] uppercase tracking-[0.2em] text-muted-foreground">
-              NASA Space Apps · Bangladesh Pilot
+              {isBn ? "নাসা স্পেস অ্যাপস · বাংলাদেশ" : "NASA Space Apps · Bangladesh Pilot"}
             </p>
             <div className="flex items-center gap-2 pt-1">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
               <span className="font-mono text-[9px] text-emerald-400 font-medium tracking-wider">
-                TELEMETRY SYNCHRONIZED
+                {isBn ? "টেলিমেট্রি সিঙ্ক হয়েছে" : "TELEMETRY SYNCHRONIZED"}
               </span>
             </div>
           </div>
@@ -85,7 +100,7 @@ export function Sidebar({
             aria-label="Toggle Mission Controls"
           >
             <span className="text-[10px] text-primary font-bold">
-              {mobileRailOpen ? "CLOSE" : "CONTROLS"}
+              {mobileRailOpen ? (isBn ? "বন্ধ" : "CLOSE") : (isBn ? "কন্ট্রোল" : "CONTROLS")}
             </span>
             <ChevronDown
               className={cn("w-3.5 h-3.5 transition-transform text-muted-foreground", mobileRailOpen && "rotate-180")}
@@ -99,7 +114,7 @@ export function Sidebar({
         {/* Field Site Selector */}
         <div className="space-y-2">
           <label className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground flex items-center justify-between">
-            <span>Target Pilot Plot</span>
+            <span>{isBn ? "পাইলট প্লট নির্বাচন" : "Target Pilot Plot"}</span>
             <OriginDot origin={selectedField.soil.origin} />
           </label>
 
@@ -117,7 +132,7 @@ export function Sidebar({
                     <MapPin className="w-3 h-3 text-primary" /> {selectedField.district}
                   </span>
                   <span>·</span>
-                  <span>{selectedField.areaAcres} ac</span>
+                  <span>{selectedField.areaAcres} {isBn ? "একর" : "ac"}</span>
                   <span>·</span>
                   <span>{selectedField.elevationM}m DEM</span>
                 </div>
@@ -152,7 +167,7 @@ export function Sidebar({
                         </span>
                       </div>
                       <span className="font-mono text-[10px] text-muted-foreground mt-0.5">
-                        {f.areaAcres} ac · {f.soil.texture} · {f.elevationM}m
+                        {f.areaAcres} {isBn ? "একর" : "ac"} · {f.soil.texture} · {f.elevationM}m
                       </span>
                     </button>
                   );
@@ -166,7 +181,7 @@ export function Sidebar({
         <div className="space-y-2">
           <label className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground flex items-center gap-1.5">
             <Calendar className="w-3 h-3 text-primary" />
-            <span>Cropping Season</span>
+            <span>{isBn ? "ফসলের মৌসুম" : "Cropping Season"}</span>
           </label>
           <div className="space-y-1.5">
             {seasons.map((s) => {
@@ -197,7 +212,7 @@ export function Sidebar({
         {/* Section Navigation Quick Links */}
         <div className="space-y-1 pt-2 border-t border-border/70">
           <label className="font-mono text-[10px] uppercase tracking-[0.18em] text-muted-foreground mb-2 block">
-            Mission Control Modules
+            {isBn ? "মিশন কন্ট্রোল মডিউল" : "Mission Control Modules"}
           </label>
           {navItems.map((item) => {
             const Icon = item.icon;
@@ -226,8 +241,8 @@ export function Sidebar({
         {/* Orbit & Satellite Constellation Status Footer */}
         <div className="space-y-3 pt-4 border-t border-border/70 font-mono text-[10px]">
           <div className="flex items-center justify-between text-muted-foreground">
-            <span>Active Orbits:</span>
-            <span className="text-foreground">{SATELLITES.length} SATELLITES</span>
+            <span>{isBn ? "সক্রিয় কক্ষপথ:" : "Active Orbits:"}</span>
+            <span className="text-foreground">{SATELLITES.length} {isBn ? "টি স্যাটেলাইট" : "SATELLITES"}</span>
           </div>
           <div className="grid grid-cols-2 gap-1.5">
             {SATELLITES.map((sat) => (
